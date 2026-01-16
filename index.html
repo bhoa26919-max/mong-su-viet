@@ -1,53 +1,202 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Mộng Sử Việt</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #1b1b2f;
-      color: #fff;
-      text-align: center;
-    }
-    header {
-      background: #162447;
-      padding: 15px;
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .card {
-      background: #1f4068;
-      margin: 20px;
-      padding: 15px;
-      border-radius: 12px;
-    }
-    button {
-      background: #e43f5a;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: white;
-      font-size: 16px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Mộng Võ Hiệp – Sử Việt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{margin:0;font-family:Arial;background:#020617;color:#fff}
+h1,h2,h3{text-align:center;margin:6px}
+.game{max-width:430px;margin:auto;padding:10px}
+.panel{background:#1e293b;border-radius:14px;padding:10px;margin-bottom:10px}
+.row{display:flex;gap:6px}
+.col{flex:1}
+img{width:100%;border-radius:10px}
+button{width:100%;padding:10px;border:0;border-radius:10px;margin-top:5px}
+.atk{background:#ef4444;color:#fff}
+.skill{background:#3b82f6;color:#fff}
+.map button{background:#16a34a;color:#fff}
+.lock{background:#475569!important}
+.hp{background:#334155;border-radius:8px;overflow:hidden;height:14px}
+.hp div{height:14px;background:#22c55e}
+.small{font-size:13px;color:#cbd5f5}
+.hide{display:none}
+</style>
 </head>
+
 <body>
 
-<header>🇻🇳 Mộng Sử Việt 🇻🇳</header>
+<h1>🇻🇳 Mộng Võ Hiệp – Sử Việt 🇻🇳</h1>
 
-<div class="card">
-  <h2>Trần Quốc Toản</h2>
-  <p>Tướng Sử Thi</p>
-  <p><b>Chiêu tối thượng:</b> Hạo Khí Đại Việt</p>
-  <button onclick="alert('🔥 Hạo Khí Đại Việt được kích hoạt!')">
-    Dùng chiêu
-  </button>
+<div class="game">
+
+<!-- ĐỘI HÌNH -->
+<div class="panel">
+<h2>👥 Đội hình (3 tướng)</h2>
+<select onchange="chonTuong(this.value)">
+<option value="tranquocto">Trần Quốc Toản</option>
+<option value="tranhungdao">Trần Hưng Đạo</option>
+<option value="ngoquyen">Ngô Quyền</option>
+<option value="quangtrung">Quang Trung</option>
+<option value="lythuongkiet">Lý Thường Kiệt</option>
+<option value="thanhgiong">Thánh Gióng</option>
+<option value="laclongquan">Lạc Long Quân</option>
+</select>
+
+<h3 id="tenTuong"></h3>
+<img id="anhTuong">
+<div class="hp"><div id="hpTuong"></div></div>
+<p class="small">⭐ Sao: <span id="sao"></span></p>
+<p><b>Chiêu:</b> <span id="chieu"></span></p>
 </div>
 
-<p>Game lịch sử Việt – Chơi miễn phí</p>
+<!-- TRANG BỊ -->
+<div class="panel">
+<h2>🎒 Trang bị</h2>
+<p id="tb"></p>
+</div>
+
+<!-- BOSS -->
+<div class="panel">
+<h2 id="tenBoss"></h2>
+<img id="anhBoss">
+<div class="hp"><div id="hpBoss"></div></div>
+</div>
+
+<button class="atk" onclick="danh()">⚔️ Đánh thường</button>
+<button class="skill" onclick="dungChieu()">🔥 Dùng chiêu</button>
+
+<!-- MAP -->
+<div class="panel map">
+<h2>🗺️ Bản đồ</h2>
+<div id="map"></div>
+</div>
+
+<p id="log" class="small"></p>
+
+</div>
+
+<script>
+/* ====== CHỐNG NGHIỆN ====== */
+let playTime=localStorage.playTime?parseInt(localStorage.playTime):0;
+let lastPlay=localStorage.lastPlay?parseInt(localStorage.lastPlay):Date.now();
+if(Date.now()-lastPlay>3600000)playTime=0;
+setInterval(()=>{
+  playTime++;
+  localStorage.playTime=playTime;
+  localStorage.lastPlay=Date.now();
+  if(playTime>=120){
+    alert("⛔ Bạn đã chơi quá 120 phút. Vui lòng quay lại sau 1 giờ.");
+    document.body.innerHTML="";
+  }
+},60000);
+
+/* ====== DỮ LIỆU TƯỚNG ====== */
+const tuong={
+tranquocto:{ten:"Trần Quốc Toản",hp:100,chieu:"Hào Khí Đại Việt",sao:5,tb:"🍊 Cam Truyền Quốc ⭐⭐⭐⭐⭐"},
+tranhungdao:{ten:"Trần Hưng Đạo",hp:140,chieu:"Vạn Kiếp Trận",sao:5,tb:"⚔️ Kiếm Vạn Kiếp ⭐⭐⭐⭐⭐"},
+ngoquyen:{ten:"Ngô Quyền",hp:130,chieu:"Bạch Đằng Giang",sao:4,tb:"🛡️ Cọc Gỗ Bạch Đằng"},
+quangtrung:{ten:"Quang Trung",hp:120,chieu:"Hành Quân Thần Tốc",sao:4,tb:"🐎 Chiến Mã Tây Sơn"},
+lythuongkiet:{ten:"Lý Thường Kiệt",hp:125,chieu:"Nam Quốc Sơn Hà",sao:4,tb:"📜 Thiên Thư"},
+thanhgiong:{ten:"Thánh Gióng",hp:160,chieu:"Thiên Mã Xung Thiên",sao:5,tb:"🐴 Thiên Mã Thánh Giáp ⭐⭐⭐⭐⭐"},
+laclongquan:{ten:"Lạc Long Quân",hp:180,chieu:"Hồng Thủy Khai Thiên",sao:5,tb:"🐉 Long Thần Pháp Bảo ⭐⭐⭐⭐⭐"}
+};
+
+/* ====== MAP ====== */
+const mapBoss=[
+{name:"Thổ Phỉ",hp:80},
+{name:"Sơn Tinh",hp:120},
+{name:"Thủy Tinh",hp:160},
+{name:"Thuồng Luồng",hp:220},
+{name:"Ngoại Xâm",hp:300}
+];
+
+/* ====== TRẠNG THÁI ====== */
+let cur=tuong.tranquocto;
+let hpT=cur.hp;
+let ai=0;
+let hpB=mapBoss[0].hp;
+let luotAi=localStorage.ai?parseInt(localStorage.ai):0;
+let lanVuot=localStorage.lanVuot?JSON.parse(localStorage.lanVuot):{};
+
+/* ====== HÀM ====== */
+function chonTuong(id){
+cur=tuong[id];
+hpT=cur.hp;
+capNhat();
+}
+
+function capNhat(){
+tenTuong.innerText=cur.ten;
+anhTuong.src="https://i.imgur.com/3Qy4QwT.png";
+chieu.innerText=cur.chieu;
+sao.innerText="⭐".repeat(cur.sao);
+tb.innerText=cur.sao>=5?cur.tb:"🔒 Mở khi 5 sao";
+hpTuong.style.width=(hpT/cur.hp*100)+"%";
+
+tenBoss.innerText=mapBoss[ai].name;
+anhBoss.src="https://i.imgur.com/YZ6G7yQ.png";
+hpBoss.style.width=(hpB/mapBoss[ai].hp*100)+"%";
+
+map.innerHTML="";
+mapBoss.forEach((m,i)=>{
+let b=document.createElement("button");
+b.innerText="Ải "+(i+1);
+if(i>ai)b.className="lock";
+else b.onclick=()=>vaoAi(i);
+map.appendChild(b);
+});
+}
+
+function vaoAi(i){
+let today=new Date().toDateString();
+lanVuot[today]=lanVuot[today]||{};
+lanVuot[today][i]=lanVuot[today][i]||0;
+if(lanVuot[today][i]>=2){
+alert("⛔ Ải này chỉ vượt tối đa 2 lần/ngày");
+return;
+}
+ai=i;
+hpB=mapBoss[i].hp;
+capNhat();
+}
+
+function danh(){
+hpB-=Math.random()*15+10;
+phanCong();
+kiemTra();
+capNhat();
+}
+
+function dungChieu(){
+hpB-=Math.random()*30+25;
+phanCong();
+kiemTra();
+capNhat();
+}
+
+function phanCong(){
+hpT-=Math.random()*12+8;
+}
+
+function kiemTra(){
+if(hpB<=0){
+alert("🏆 Qua ải!");
+let today=new Date().toDateString();
+lanVuot[today][ai]=(lanVuot[today][ai]||0)+1;
+localStorage.lanVuot=JSON.stringify(lanVuot);
+if(ai<mapBoss.length-1)ai++;
+hpB=mapBoss[ai].hp;
+}
+if(hpT<=0){
+alert("💀 Thất bại!");
+hpT=cur.hp;
+hpB=mapBoss[ai].hp;
+}
+}
+
+capNhat();
+</script>
 
 </body>
 </html>
