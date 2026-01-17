@@ -2,192 +2,165 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<title>Trần Quốc Toản vs Mông Nguyên</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mộng Võ Hiệp – Trần Quốc Toản</title>
-
 <style>
 body{
-    margin:0;
-    font-family:Arial;
-    background:radial-gradient(circle,#1b2340,#050814);
-    color:white;
-    text-align:center;
+  margin:0;
+  font-family:Arial;
+  background:radial-gradient(#0b1d3a,#000);
+  color:white;
+  text-align:center;
 }
-h1{margin:10px}
-
+h1{padding:10px}
 .arena{
-    display:flex;
-    justify-content:space-around;
-    padding:10px;
+  display:flex;
+  justify-content:space-around;
+  margin-top:10px;
 }
-
 .char{
-    width:45%;
-    background:#10182f;
-    border:2px solid #c9a24d;
-    border-radius:15px;
-    padding:10px;
-    position:relative;
+  width:45%;
+  background:#081a33;
+  border:3px solid gold;
+  border-radius:15px;
+  padding:10px;
 }
-
+.hp{
+  height:10px;
+  background:#400;
+  border-radius:5px;
+  overflow:hidden;
+}
+.hp div{
+  height:100%;
+  background:#0f0;
+  width:100%;
+}
+.sprite{
+  position:relative;
+  height:220px;
+}
 .hero{
-    position:relative;
-    width:120px;
-    height:160px;
-    margin:0 auto;
+  width:120px;
+  margin:auto;
+  animation:idle 1.2s infinite alternate;
 }
-
-/* BODY */
-.body{
-    position:absolute;
-    bottom:0;
-    left:30px;
-    width:60px;
-    height:90px;
-    background:#555;
-    border-radius:20px;
-}
-
-/* HEAD */
-.head{
-    position:absolute;
-    top:10px;
-    left:38px;
-    width:44px;
-    height:44px;
-    background:#f1c27d;
-    border-radius:50%;
-}
-
-/* SWORD */
-.sword{
-    position:absolute;
-    right:-10px;
-    top:60px;
-    width:8px;
-    height:70px;
-    background:silver;
-}
-
-/* FLAG */
 .flag{
-    position:absolute;
-    left:-25px;
-    top:20px;
-    width:20px;
-    height:90px;
-    background:red;
-    animation:wave 1.2s infinite alternate;
+  position:absolute;
+  left:0;
+  top:30px;
+  width:40px;
+  height:100px;
+  background:red;
 }
-.flag::after{
-    content:"★";
-    color:yellow;
-    position:absolute;
-    top:10px;
-    left:5px;
+.flag:after{
+  content:"★";
+  color:yellow;
+  font-size:24px;
+  position:absolute;
+  top:35px;
+  left:8px;
 }
-
-@keyframes wave{
-    from{transform:rotate(-5deg)}
-    to{transform:rotate(5deg)}
+.sword{
+  position:absolute;
+  right:-10px;
+  top:80px;
+  width:10px;
+  height:60px;
+  background:silver;
 }
-
-.idle{
-    animation:idle 1s infinite alternate;
+.boss{
+  width:120px;
+  height:180px;
+  background:#500;
+  margin:auto;
+  border-radius:10px;
+}
+.aura{
+  position:absolute;
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  background:radial-gradient(rgba(255,215,0,.8),transparent);
+  top:30px;
+  left:-20px;
+  display:none;
+  animation:pulse .5s infinite;
 }
 @keyframes idle{
-    from{transform:translateY(0)}
-    to{transform:translateY(-4px)}
+  from{transform:translateY(0)}
+  to{transform:translateY(-5px)}
 }
-
-.hp,.rage{
-    height:14px;
-    background:#333;
-    border-radius:10px;
-    margin:6px 0;
+@keyframes pulse{
+  from{transform:scale(1)}
+  to{transform:scale(1.2)}
 }
-.hp div{height:100%;background:#e74c3c}
-.rage div{height:100%;background:#f1c40f}
-
 button{
-    width:90%;
-    margin:5px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    font-size:15px;
+  margin:10px;
+  padding:12px 20px;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
 }
 .attack{background:#2ecc71}
-.skill{background:#c0392b;color:white}
-
-#log{min-height:40px;margin-top:5px}
+.skill{background:#e74c3c;color:white}
+.shake{
+  animation:shake .2s;
+}
+@keyframes shake{
+  0%{transform:translate(0)}
+  25%{transform:translate(5px)}
+  50%{transform:translate(-5px)}
+  75%{transform:translate(5px)}
+}
 </style>
 </head>
 
 <body>
-
 <h1>⚔️ Trần Quốc Toản vs Mông Nguyên ⚔️</h1>
 
 <div class="arena">
+  <div class="char">
+    <h3>🇻🇳 Trần Quốc Toản</h3>
+    <div class="sprite">
+      <div class="aura" id="aura"></div>
+      <div class="flag"></div>
+      <div class="sword"></div>
+      <img class="hero" src="https://i.imgur.com/8Km9tLL.png">
+    </div>
+    <div class="hp"><div id="hpHero"></div></div>
+  </div>
 
-<div class="char">
-<h3>🇻🇳 Trần Quốc Toản</h3>
-<div class="hero idle" id="hero">
-    <div class="flag"></div>
-    <div class="sword"></div>
-    <div class="head"></div>
-    <div class="body"></div>
+  <div class="char" id="bossBox">
+    <h3>🐺 Mông Nguyên</h3>
+    <div class="boss"></div>
+    <div class="hp"><div id="hpBoss"></div></div>
+  </div>
 </div>
-<div class="hp"><div id="hp" style="width:100%"></div></div>
-<div class="rage"><div id="rage" style="width:0%"></div></div>
-<button class="attack" onclick="atk()">⚔️ Đánh thường</button>
+
+<button class="attack" onclick="attack()">⚔️ Đánh thường</button>
 <button class="skill" onclick="skill()">🔥 Hào Khí Đại Việt</button>
-</div>
-
-<div class="char">
-<h3>🐺 Giặc Mông Nguyên</h3>
-<div class="hero idle" style="background:#300"></div>
-<div class="hp"><div id="bhp" style="width:100%"></div></div>
-</div>
-
-</div>
-
-<div id="log"></div>
 
 <script>
-let hp=100,bhp=120,rage=0;
-
-function update(){
-document.getElementById("hp").style.width=hp+"%";
-document.getElementById("bhp").style.width=(bhp/120*100)+"%";
-document.getElementById("rage").style.width=rage+"%";
+let bossHP=100;
+function attack(){
+  bossHP-=10;
+  update();
 }
-
-function atk(){
-bhp-=10+Math.random()*5;
-rage=Math.min(100,rage+20);
-log("Trần Quốc Toản chém địch!");
-boss();
-update();
-}
-
 function skill(){
-if(rage<100){log("Chưa đủ nộ khí");return;}
-bhp-=35;
-rage=0;
-log("🔥 HÀO KHÍ ĐẠI VIỆT BÙNG NỔ 🔥");
-boss();
-update();
+  bossHP-=30;
+  document.getElementById("aura").style.display="block";
+  document.body.classList.add("shake");
+  setTimeout(()=>{
+    document.getElementById("aura").style.display="none";
+    document.body.classList.remove("shake");
+  },400);
+  update();
 }
-
-function boss(){
-hp-=8+Math.random()*6;
-}
-
-function log(t){
-document.getElementById("log").innerText=t;
+function update(){
+  if(bossHP<0)bossHP=0;
+  document.getElementById("hpBoss").style.width=bossHP+"%";
 }
 </script>
-
 </body>
 </html>
