@@ -2,104 +2,190 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Mộng Võ Hiệp – Sử Việt</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mộng Võ Hiệp – Trần Quốc Toản</title>
+
 <style>
 body{
-  margin:0;
-  background:linear-gradient(#0f2027,#203a43,#2c5364);
-  font-family:Arial;
-  color:white;
+    margin:0;
+    font-family:Arial;
+    background:radial-gradient(circle,#1b2340,#050814);
+    color:white;
+    text-align:center;
 }
-h1{text-align:center;margin:15px 0}
-.card{
-  background:#1e293b;
-  margin:12px;
-  padding:12px;
-  border-radius:14px;
+h1{margin:10px}
+
+.arena{
+    display:flex;
+    justify-content:space-around;
+    padding:10px;
 }
-.team{display:flex;justify-content:space-around}
+
+.char{
+    width:45%;
+    background:#10182f;
+    border:2px solid #c9a24d;
+    border-radius:15px;
+    padding:10px;
+    position:relative;
+}
+
 .hero{
-  width:64px;height:64px;
-  border-radius:50%;
-  background:#334155;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:32px;
-  animation:idle 1.5s infinite alternate;
+    position:relative;
+    width:120px;
+    height:160px;
+    margin:0 auto;
 }
-.hero.attack{animation:attack .3s infinite}
+
+/* BODY */
+.body{
+    position:absolute;
+    bottom:0;
+    left:30px;
+    width:60px;
+    height:90px;
+    background:#555;
+    border-radius:20px;
+}
+
+/* HEAD */
+.head{
+    position:absolute;
+    top:10px;
+    left:38px;
+    width:44px;
+    height:44px;
+    background:#f1c27d;
+    border-radius:50%;
+}
+
+/* SWORD */
+.sword{
+    position:absolute;
+    right:-10px;
+    top:60px;
+    width:8px;
+    height:70px;
+    background:silver;
+}
+
+/* FLAG */
+.flag{
+    position:absolute;
+    left:-25px;
+    top:20px;
+    width:20px;
+    height:90px;
+    background:red;
+    animation:wave 1.2s infinite alternate;
+}
+.flag::after{
+    content:"★";
+    color:yellow;
+    position:absolute;
+    top:10px;
+    left:5px;
+}
+
+@keyframes wave{
+    from{transform:rotate(-5deg)}
+    to{transform:rotate(5deg)}
+}
+
+.idle{
+    animation:idle 1s infinite alternate;
+}
 @keyframes idle{
-  from{transform:translateY(0)}
-  to{transform:translateY(-6px)}
+    from{transform:translateY(0)}
+    to{transform:translateY(-4px)}
 }
-@keyframes attack{
-  from{transform:scale(1)}
-  to{transform:scale(1.2)}
+
+.hp,.rage{
+    height:14px;
+    background:#333;
+    border-radius:10px;
+    margin:6px 0;
 }
+.hp div{height:100%;background:#e74c3c}
+.rage div{height:100%;background:#f1c40f}
+
 button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border:none;
-  border-radius:10px;
-  background:#22c55e;
-  font-size:16px;
+    width:90%;
+    margin:5px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
 }
-.bar{
-  height:10px;
-  background:#22c55e;
-  border-radius:6px;
-}
-.small{font-size:13px;color:#cbd5f5}
+.attack{background:#2ecc71}
+.skill{background:#c0392b;color:white}
+
+#log{min-height:40px;margin-top:5px}
 </style>
 </head>
 
 <body>
 
-<h1>🇻🇳 Mộng Võ Hiệp – Sử Việt 🇻🇳</h1>
+<h1>⚔️ Trần Quốc Toản vs Mông Nguyên ⚔️</h1>
 
-<div class="card">
-<h3>👥 Đội hình (5 tướng)</h3>
-<div class="team">
-<div class="hero" id="h1">⚔️</div>
-<div class="hero" id="h2">🔥</div>
-<div class="hero" id="h3">🛡️</div>
-<div class="hero" id="h4">🐉</div>
-<div class="hero" id="h5">⭐</div>
-</div>
-<p class="small">Trần Quốc Toản – Thánh Gióng – Ngô Quyền – Lạc Long Quân – Sơn Tinh</p>
-</div>
+<div class="arena">
 
-<div class="card">
-<h3>🗺️ Vượt ải</h3>
-<div class="bar" id="hp"></div>
-<button onclick="fight()">⚔️ Đánh boss</button>
-<p id="log" class="small"></p>
+<div class="char">
+<h3>🇻🇳 Trần Quốc Toản</h3>
+<div class="hero idle" id="hero">
+    <div class="flag"></div>
+    <div class="sword"></div>
+    <div class="head"></div>
+    <div class="body"></div>
+</div>
+<div class="hp"><div id="hp" style="width:100%"></div></div>
+<div class="rage"><div id="rage" style="width:0%"></div></div>
+<button class="attack" onclick="atk()">⚔️ Đánh thường</button>
+<button class="skill" onclick="skill()">🔥 Hào Khí Đại Việt</button>
 </div>
 
-<div class="card">
-<h3>⚔️ PVP giả lập</h3>
-<button onclick="pvp()">🔥 Giao chiến</button>
-<p id="pvpLog" class="small"></p>
+<div class="char">
+<h3>🐺 Giặc Mông Nguyên</h3>
+<div class="hero idle" style="background:#300"></div>
+<div class="hp"><div id="bhp" style="width:100%"></div></div>
 </div>
+
+</div>
+
+<div id="log"></div>
 
 <script>
-let hp=100;
-function fight(){
-  document.querySelectorAll('.hero').forEach(h=>h.classList.add('attack'));
-  setTimeout(()=>document.querySelectorAll('.hero').forEach(h=>h.classList.remove('attack')),300);
-  hp-=Math.floor(Math.random()*15+5);
-  if(hp<0) hp=0;
-  document.getElementById('hp').style.width=hp+"%";
-  document.getElementById('log').innerText=
-    hp>0 ? "Boss bị đánh! HP còn "+hp+"%" : "🎉 Thắng boss!";
+let hp=100,bhp=120,rage=0;
+
+function update(){
+document.getElementById("hp").style.width=hp+"%";
+document.getElementById("bhp").style.width=(bhp/120*100)+"%";
+document.getElementById("rage").style.width=rage+"%";
 }
-function pvp(){
-  let r=Math.random();
-  document.getElementById('pvpLog').innerText=
-    r>0.5 ? "🏆 Thắng PVP! Nhận 100 vàng" : "❌ Thua PVP, thử lại!";
+
+function atk(){
+bhp-=10+Math.random()*5;
+rage=Math.min(100,rage+20);
+log("Trần Quốc Toản chém địch!");
+boss();
+update();
+}
+
+function skill(){
+if(rage<100){log("Chưa đủ nộ khí");return;}
+bhp-=35;
+rage=0;
+log("🔥 HÀO KHÍ ĐẠI VIỆT BÙNG NỔ 🔥");
+boss();
+update();
+}
+
+function boss(){
+hp-=8+Math.random()*6;
+}
+
+function log(t){
+document.getElementById("log").innerText=t;
 }
 </script>
 
